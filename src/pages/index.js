@@ -1,0 +1,16 @@
+export { default as HomePage }             from "./HomePage";
+export { default as NewsListPage }         from "./NewsListPage";
+export { default as NewsDetailPage }       from "./NewsDetailPage";
+export { default as FacultyListPage }      from "./FacultyListPage";
+export { default as FacultyDetailPage }    from "./FacultyDetailPage";
+export { default as DepartmentDetailPage } from "./DepartmentDetailPage";
+export { default as TeacherDetailPage }    from "./TeacherDetailPage";
+export { default as AdmissionsPage }       from "./AdmissionsPage";
+export { default as AboutPage }            from "./AboutPage";
+export { default as StudentPortalPage }    from "./StudentPortalPage";
+export { default as ContactPage }          from "./ContactPage";
+export { default as IlmiyFaoliyatPage }   from "./IlmiyFaoliyatPage";
+export { default as MadaniyFaoliyatPage } from "./MadaniyFaoliyatPage";
+export { default as MoliyaPage }           from "./MoliyaPage";
+export { default as TalabalargaHubPage }  from "./TalabalargaHubPage";
+export { default as StudentInfoPage }      from "./StudentInfoPage";
