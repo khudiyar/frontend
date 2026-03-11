@@ -7,6 +7,7 @@ const mobileNavItems = [
   { id:"news",      icon:"newspaper",  label:"Yangiliklar", page:"news-list", badge:true },
   { id:"students",  icon:"graduation", label:"Talabalar",   page:"portal"    },
   { id:"admission", icon:"clipboard",  label:"Qabul",       page:"admissions"},
+  { id:"contact", icon:"contact",  label:"Aloqa",       page:"contact"},
 ];
 
 function MobileBottomNav({ currentPage, navigate }) {

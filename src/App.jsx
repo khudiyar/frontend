@@ -1,4 +1,14 @@
 import { useState } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useNavigate,
+  useParams,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+
 import C from "./constants/colors";
 import Ico from "./components/ui/Ico";
 import { useIsMobile } from "./hooks";
@@ -15,6 +25,7 @@ import DepartmentDetailPage  from "./pages/DepartmentDetailPage";
 import TeacherDetailPage     from "./pages/TeacherDetailPage";
 import AdmissionsPage        from "./pages/AdmissionsPage";
 import AboutPage             from "./pages/AboutPage";
+import AdministrationPage from "./pages/AdministrationPage.jsx";
 import StudentPortalPage     from "./pages/StudentPortalPage";
 import ContactPage           from "./pages/ContactPage";
 import IlmiyFaoliyatPage    from "./pages/IlmiyFaoliyatPage";
@@ -22,35 +33,41 @@ import MadaniyFaoliyatPage  from "./pages/MadaniyFaoliyatPage";
 import MoliyaPage            from "./pages/MoliyaPage";
 import TalabalargaHubPage   from "./pages/TalabalargaHubPage";
 import StudentInfoPage       from "./pages/StudentInfoPage";
+import AdminPanel from "./pages/AdminPanel.jsx";
+import ModalsPage from "./pages/ModalsPage.jsx";
+import ChartsPage from "./pages/ChartsPage.jsx";
+import TablePage from "./pages/TablePage.jsx";
+import EditorPage from "./pages/EditorPage.jsx";
 
-export default function App() {
-  const [route,setRoute]=useState({page:"home",params:{}});
-  const isMobile=useIsMobile();
-  const navigate=(page,params={})=>{setRoute({page,params});window.scrollTo({top:0,behavior:"smooth"});};
-  const isPortal=route.page==="portal";
+import AuditoriumPage from "./pages/AuditoriumPage.jsx";
+import CurriculumPage from "./pages/CurriculumPage.jsx";
+import EmployeePage from "./pages/EmployeePage.jsx";
 
-  const pages={
-    "home":           <HomePage           navigate={navigate} isMobile={isMobile}/>,
-    "news-list":      <NewsListPage       navigate={navigate} isMobile={isMobile}/>,
-    "news-detail":    <NewsDetailPage     navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "faculty-list":   <FacultyListPage    navigate={navigate} isMobile={isMobile}/>,
-    "faculty-detail": <FacultyDetailPage  navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "dept-detail":    <DepartmentDetailPage navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "teacher-detail": <TeacherDetailPage  navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "admissions":     <AdmissionsPage     navigate={navigate} isMobile={isMobile}/>,
-    "about":          <AboutPage          navigate={navigate} isMobile={isMobile}/>,
-    "portal":         <StudentPortalPage  navigate={navigate} isMobile={isMobile}/>,
-    "contact":        <ContactPage        navigate={navigate} isMobile={isMobile}/>,
-    "science":        <IlmiyFaoliyatPage  navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "cultural":       <MadaniyFaoliyatPage navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "finance":        <MoliyaPage         navigate={navigate} params={route.params} isMobile={isMobile}/>,
-    "edu-methods":    <MoliyaPage         navigate={navigate} params={{section:"tolov"}} isMobile={isMobile}/>,
-    "student-hub":    <TalabalargaHubPage navigate={navigate} isMobile={isMobile}/>,
-    "student-info":   <StudentInfoPage    navigate={navigate} params={route.params} isMobile={isMobile}/>,
+/* ─── Inner layout — uses router hooks ─────────────────────────── */
+function AppLayout() {
+  const navigateFn = useNavigate();
+  const location   = useLocation();
+  const isMobile   = useIsMobile();
+
+  // Thin wrapper so existing pages keep the same `navigate(page, params)` API
+  const navigate = (page, params = {}) => {
+    const path = buildPath(page, params);
+    navigateFn(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const currentPage = locationToPage(location.pathname);
+  const isPortal    = currentPage === "portal";
+
   return (
-    <div style={{ fontFamily:"'IBM Plex Sans','Segoe UI',sans-serif", background:C.lightGray, minHeight:"100vh", paddingBottom:isMobile?64:0 }}>
+    <div
+      style={{
+        fontFamily: "'IBM Plex Sans','Segoe UI',sans-serif",
+        background: C.lightGray,
+        minHeight: "100vh",
+        paddingBottom: isMobile ? 64 : 0,
+      }}
+    >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
@@ -65,57 +82,168 @@ export default function App() {
         input::placeholder,textarea::placeholder{color:#6B7BAE!important;}
       `}</style>
 
-      {/* Demo navigation bar */}
-      <div style={{ background:"#070E38", padding:"6px 0", overflowX:"auto", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
-        <div style={{ display:"flex", gap:4, padding:"0 14px", minWidth:"max-content", alignItems:"center" }}>
-          <span style={{ color:"rgba(255,255,255,0.28)", fontSize:11, marginRight:6, whiteSpace:"nowrap", display:"flex", alignItems:"center", gap:5 }}>
-            <Ico name="grid2" size={11} color="rgba(255,255,255,0.28)"/> Demo sahifalar:
-          </span>
-          {[
-            {label:"Bosh sahifa",      icon:"home",       page:"home"},
-            {label:"Yangiliklar",      icon:"newspaper",  page:"news-list"},
-            {label:"Fakultetlar",      icon:"university", page:"faculty-list"},
-            {label:"Fakultet",         icon:"bookOpen",   page:"faculty-detail", params:{facId:1}},
-            {label:"Kafedra",          icon:"building2",  page:"dept-detail",    params:{deptId:1}},
-            {label:"O'qituvchi",       icon:"user",       page:"teacher-detail", params:{teacherId:1}},
-            {label:"Ilmiy faoliyat",   icon:"microscope", page:"science",        params:{section:"kengash"}},
-            {label:"Ilmiy loyihalar",  icon:"layers",     page:"science",        params:{section:"loyihalar"}},
-            {label:"Doktorantura",     icon:"graduation", page:"science",        params:{section:"doktorantura"}},
-            {label:"Konferensiyalar",  icon:"globe",      page:"science",        params:{section:"konferensiyalar"}},
-            {label:"Jurnallar",        icon:"newspaper",  page:"science",        params:{section:"jurnallar"}},
-            {label:"Sport",            icon:"sportsBall", page:"cultural",       params:{section:"sport"}},
-            {label:"Talabalar hayoti", icon:"users",      page:"cultural",       params:{section:"hayot"}},
-            {label:"Psixolog",         icon:"heart",      page:"cultural",       params:{section:"psixolog"}},
-            {label:"Turar joy",        icon:"building2",  page:"cultural",       params:{section:"turarjoy"}},
-            {label:"Yashil UNI",       icon:"globe",      page:"cultural",       params:{section:"yashil"}},
-            {label:"To'lov narxlari",  icon:"creditCard", page:"finance",        params:{section:"tolov"}},
-            {label:"Xarajatlar",       icon:"barChart",   page:"finance",        params:{section:"xarajat"}},
-            {label:"Shartnomalar",     icon:"fileText",   page:"finance",        params:{section:"shartnoma"}},
-            {label:"Talabalarga",      icon:"graduation", page:"student-hub"},
-            {label:"Baholash tizimi",  icon:"barChart",   page:"student-info",   params:{section:"baholash"}},
-            {label:"GPA & Kredit",     icon:"trendUp",    page:"student-info",   params:{section:"gpa"}},
-            {label:"Stipendiyalar",    icon:"award",      page:"student-info",   params:{section:"stipendiya"}},
-            {label:"Mobillik",         icon:"globe",      page:"student-info",   params:{section:"mobillik"}},
-            {label:"Iqtidorli",        icon:"star",       page:"student-info",   params:{section:"iqtidorli"}},
-            {label:"Qabul",            icon:"clipboard",  page:"admissions"},
-            {label:"Haqida",           icon:"scroll",     page:"about"},
-            {label:"Talaba portali",   icon:"graduation", page:"portal"},
-            {label:"Aloqa",            icon:"phone",      page:"contact"},
-          ].map(item=>(
-            <button key={item.page+(item.params?.section||item.params?.newsId||item.params?.facId||"")} onClick={()=>navigate(item.page,item.params||{})}
-              style={{ display:"flex", alignItems:"center", gap:5, padding:"5px 12px", borderRadius:20, border:"none", cursor:"pointer", fontSize:11, fontWeight:600, fontFamily:"inherit", background:route.page===item.page?C.orange:"rgba(255,255,255,0.1)", color:C.white, whiteSpace:"nowrap", flexShrink:0, transition:"all 0.2s" }}>
-              <Ico name={item.icon} size={12} color={C.white} sw={route.page===item.page?2.2:1.5}/>
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {!isPortal && (
+        <Header navigate={navigate} currentPage={currentPage} isMobile={isMobile} />
+      )}
 
-      {!isPortal&&<Header navigate={navigate} currentPage={route.page} isMobile={isMobile}/>}
-      <main>{pages[route.page]||pages["home"]}</main>
-      {!isMobile&&!isPortal&&<Footer navigate={navigate}/>}
-      {isMobile&&<MobileBottomNav currentPage={route.page} navigate={navigate}/>}
+      <main>
+        <Routes>
+          {/* ── Static pages ── */}
+          <Route path="/"            element={<HomePage           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/news"        element={<NewsListPage       navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/faculty"     element={<FacultyListPage    navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/admissions"  element={<AdmissionsPage     navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/about"       element={<AboutPage          navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/administration"       element={<AdministrationPage          navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/portal"      element={<StudentPortalPage  navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/contact"     element={<ContactPage        navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/student-hub" element={<TalabalargaHubPage navigate={navigate} isMobile={isMobile} />} />
+
+          {/* ── Dynamic-param pages ── */}
+          <Route path="/news/:newsId"         element={<NewsDetailWrapper        navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/faculty/:facId"       element={<FacultyDetailWrapper     navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/dept/:deptId"         element={<DeptDetailWrapper        navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/teacher/:teacherId"   element={<TeacherDetailWrapper     navigate={navigate} isMobile={isMobile} />} />
+
+          {/* ── Section pages ── */}
+          <Route path="/science/:section"     element={<ScienceWrapper           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/science"              element={<Navigate replace to="/science/kengash" />} />
+
+          <Route path="/cultural/:section"    element={<CulturalWrapper          navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/cultural"             element={<Navigate replace to="/cultural/sport" />} />
+
+          <Route path="/finance/:section"     element={<FinanceWrapper           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/finance"              element={<Navigate replace to="/finance/tolov" />} />
+
+          <Route path="/student-info/:section" element={<StudentInfoWrapper      navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/student-info"          element={<Navigate replace to="/student-info/baholash" />} />
+
+          {/* ── edu-methods alias ── */}
+          <Route path="/edu-methods" element={<MoliyaPage navigate={navigate} params={{ section: "tolov" }} isMobile={isMobile} />} />
+
+          <Route path="/admin"          element={<AdminPanel           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/modals"          element={<ModalsPage           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/editor"          element={<EditorPage           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/charts"          element={<ChartsPage           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/tables"          element={<TablePage          navigate={navigate} isMobile={isMobile} />} />
+
+          <Route path="/auditorium"          element={<AuditoriumPage          navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/curriculum"          element={<CurriculumPage          navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/employee"          element={<EmployeePage          navigate={navigate} isMobile={isMobile} />} />
+
+          {/* ── Fallback ── */}
+          <Route path="*" element={<Navigate replace to="/" />} />
+        </Routes>
+      </main>
+
+      {!isMobile && !isPortal && <Footer navigate={navigate} />}
+      {isMobile  && <MobileBottomNav currentPage={currentPage} navigate={navigate} />}
     </div>
   );
 }
 
+/* ─── Param-reading wrappers ────────────────────────────────────── */
+function NewsDetailWrapper({ navigate, isMobile }) {
+  const { newsId } = useParams();
+  return <NewsDetailPage navigate={navigate} params={{ newsId }} isMobile={isMobile} />;
+}
+function FacultyDetailWrapper({ navigate, isMobile }) {
+  const { facId } = useParams();
+  return <FacultyDetailPage navigate={navigate} params={{ facId: Number(facId) }} isMobile={isMobile} />;
+}
+function DeptDetailWrapper({ navigate, isMobile }) {
+  const { deptId } = useParams();
+  return <DepartmentDetailPage navigate={navigate} params={{ deptId: Number(deptId) }} isMobile={isMobile} />;
+}
+function TeacherDetailWrapper({ navigate, isMobile }) {
+  const { teacherId } = useParams();
+  return <TeacherDetailPage navigate={navigate} params={{ teacherId: Number(teacherId) }} isMobile={isMobile} />;
+}
+function ScienceWrapper({ navigate, isMobile }) {
+  const { section } = useParams();
+  return <IlmiyFaoliyatPage navigate={navigate} params={{ section }} isMobile={isMobile} />;
+}
+function CulturalWrapper({ navigate, isMobile }) {
+  const { section } = useParams();
+  return <MadaniyFaoliyatPage navigate={navigate} params={{ section }} isMobile={isMobile} />;
+}
+function FinanceWrapper({ navigate, isMobile }) {
+  const { section } = useParams();
+  return <MoliyaPage navigate={navigate} params={{ section }} isMobile={isMobile} />;
+}
+function StudentInfoWrapper({ navigate, isMobile }) {
+  const { section } = useParams();
+  return <StudentInfoPage navigate={navigate} params={{ section }} isMobile={isMobile} />;
+}
+
+/* ─── Helpers ───────────────────────────────────────────────────── */
+
+/**
+ * Convert the old (page, params) API to a URL path so all existing
+ * navigate() call-sites keep working without any changes.
+ */
+function buildPath(page, params = {}) {
+  switch (page) {
+    case "home":           return "/";
+    case "news-list":      return "/news";
+    case "news-detail":    return `/news/${params.newsId}`;
+    case "faculty-list":   return "/faculty";
+    case "faculty-detail": return `/faculty/${params.facId}`;
+    case "dept-detail":    return `/dept/${params.deptId}`;
+    case "teacher-detail": return `/teacher/${params.teacherId}`;
+    case "admissions":     return "/admissions";
+    case "about":          return "/about";
+    case "administration":          return "/administration";
+    case "portal":         return "/portal";
+    case "contact":        return "/contact";
+    case "science":        return `/science/${params.section || "kengash"}`;
+    case "cultural":       return `/cultural/${params.section || "sport"}`;
+    case "finance":        return `/finance/${params.section || "tolov"}`;
+    case "edu-methods":    return "/edu-methods";
+    case "student-hub":    return "/student-hub";
+    case "student-info":   return `/student-info/${params.section || "baholash"}`;
+
+    case "admin":    return "/admin";
+    case "tables":    return "/tables";
+    case "charts":    return "/charts";
+    case "editor":    return "/editor";
+    case "modals":    return "/modals";
+    default:               return "/";
+  }
+}
+
+/** Map current pathname back to a "page" string for Header/BottomNav active states. */
+function locationToPage(pathname) {
+  if (pathname === "/")                       return "home";
+  if (pathname.startsWith("/news/"))          return "news-detail";
+  if (pathname === "/news")                   return "news-list";
+  if (pathname.startsWith("/faculty/"))       return "faculty-detail";
+  if (pathname === "/faculty")                return "faculty-list";
+  if (pathname.startsWith("/dept/"))          return "dept-detail";
+  if (pathname.startsWith("/teacher/"))       return "teacher-detail";
+  if (pathname === "/admissions")             return "admissions";
+  if (pathname === "/about")                  return "about";
+  if (pathname === "/portal")                 return "portal";
+  if (pathname === "/contact")                return "contact";
+  if (pathname.startsWith("/science"))        return "science";
+  if (pathname.startsWith("/cultural"))       return "cultural";
+  if (pathname.startsWith("/finance"))        return "finance";
+  if (pathname === "/edu-methods")            return "edu-methods";
+  if (pathname === "/student-hub")            return "student-hub";
+  if (pathname.startsWith("/student-info"))   return "student-info";
+  if (pathname === "/admin")            return "admin";
+  if (pathname === "/tables")            return "tables";
+  if (pathname === "/charts")            return "charts";
+  if (pathname === "/editor")            return "editor";
+  if (pathname === "/modals")            return "modals";
+  return "home";
+}
+
+/* ─── Root export ───────────────────────────────────────────────── */
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
+    </BrowserRouter>
+  );
+}

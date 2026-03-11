@@ -8,7 +8,8 @@ import Breadcrumb from "../components/ui/Breadcrumb";
 import { useCountUp } from "../hooks";
 
 import { faculties, professors } from "../data/faculties";
-import { departments } from "../data/departments";
+import { departments, allTeachers } from "../data/departments";
+import { programs} from "../data/admissions.js";
 
 function FacultyDetailPage({ navigate, params, isMobile }) {
   const fac = faculties.find(f=>f.id===params?.facId)||faculties[0];
@@ -181,35 +182,78 @@ function FacultyDetailPage({ navigate, params, isMobile }) {
           </div>
         )}
         {tab==="professors"&&(
-          <div>
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:10 }}>
-              <h2 style={{ fontSize:22, fontWeight:800, color:C.dark, fontFamily:"'Playfair Display',Georgia,serif", display:"flex", alignItems:"center", gap:10 }}>
-                <Ico name="users" size={22} color={fac.color}/> O'qituvchilar tarkibi
-              </h2>
-              <Badge label={`${allTeachers.filter(t=>t.facId===fac.id).length} nafar`} color={fac.color}/>
+            <div>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:10 }}>
+                <h2 style={{ fontSize:22, fontWeight:800, color:C.dark, fontFamily:"'Playfair Display',Georgia,serif", display:"flex", alignItems:"center", gap:10 }}>
+                  <Ico name="users" size={22} color={fac.color}/> O'qituvchilar tarkibi
+                </h2>
+                <Badge label={`${allTeachers.filter(t=>t.facId===fac.id).length} nafar`} color={fac.color}/>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr", gap: 8 }}>
+                {(allTeachers.filter(t=>t.facId===fac.id).length>0 ? allTeachers.filter(t=>t.facId===fac.id) : professors).map((p, i) => {
+                  const dept = departments.find(d => d.id === p.deptId);
+                  return (
+                      <div
+                          key={p.id}
+                          onClick={() => navigate("teacher-detail", { teacherId: p.id })}
+                          style={{ background: C.white, borderRadius: 12, overflow: "hidden", display: "flex", alignItems: "stretch", border: `1px solid ${C.gray}`, cursor: "pointer", transition: "all 0.22s ease", animation: `fadeUp 0.4s ${i*40}ms ease both`, minWidth: 0 }}
+                          onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 12px 32px rgba(13,26,99,0.13)"; e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.borderColor = fac.color; }}
+                          onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.gray; }}
+                      >
+                        {/* Avatar */}
+                        <div style={{ width: isMobile ? 68 : 88, minWidth: isMobile ? 68 : 88, background: `linear-gradient(135deg,${fac.color}14,${fac.color}28)`, borderRight: `3px solid ${fac.color}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <div style={{ width: isMobile ? 46 : 58, height: isMobile ? 46 : 58, borderRadius: "50%", background: `${fac.color}22`, display: "flex", alignItems: "center", justifyContent: "center", border: `2px solid ${fac.color}40` }}>
+                            <Ico name="user" size={isMobile ? 22 : 28} color={fac.color} sw={1.3}/>
+                          </div>
+                        </div>
+
+                        {/* Body */}
+                        <div style={{ padding: isMobile ? "10px 12px" : "13px 18px", flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: isMobile ? 3 : 4 }}>
+
+                          {/* 1-qator: ism */}
+                          <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: C.dark, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+                            {p.name}
+                          </div>
+
+                          {/* 2-qator: kafedra + staj */}
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap", overflow: "hidden" }}>
+                            {dept && (
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 11, color: C.mid, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", minWidth: 0 }}>
+                    <Ico name="building2" size={10} color={C.light}/>{dept.name}
+                  </span>
+                            )}
+                            {p.exp && (
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 11, color: C.light, flexShrink: 0 }}>
+                    <Ico name="clock" size={10} color={C.light}/>{p.exp} yil
+                  </span>
+                            )}
+                          </div>
+
+                          {/* 3-qator: lavozim + ilmiy daraja */}
+                          <div style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap", maxWidth: "75%" }}>
+                            {p.degree && (
+                                <span style={{ display: "inline-flex", alignItems: "center", padding: "1px 7px", borderRadius: 20, background: `${C.navy}12`, color: C.navy, fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>
+      {p.degree}
+    </span>
+                            )}
+                            {p.title && (
+                                <span style={{ display: "inline-flex", alignItems: "center", padding: "1px 7px", borderRadius: 20, background: `${C.orange}14`, color: C.orange, fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>
+      {p.title}
+    </span>
+                            )}
+                            {p.rank && (
+                                <span style={{ display: "inline-flex", alignItems: "center", padding: "1px 7px", borderRadius: 20, background: `${fac.color}14`, color: fac.color, fontSize: 10, fontWeight: 600, whiteSpace: "nowrap" }}>
+      {p.rank}
+    </span>
+                            )}
+                          </div>
+
+                        </div>
+                      </div>
+                  );
+                })}
+              </div>
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(3,1fr)", gap:16 }}>
-              {(allTeachers.filter(t=>t.facId===fac.id).length>0?allTeachers.filter(t=>t.facId===fac.id):professors).map((p,i)=>(
-                <div key={p.id} onClick={()=>navigate("teacher-detail",{teacherId:p.id})} style={{ background:C.white, borderRadius:14, padding:20, border:`1px solid ${C.gray}`, transition:"all 0.25s", animation:`fadeUp 0.4s ${i*60}ms ease both`, textAlign:"center", cursor:"pointer" }}
-                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow="0 12px 32px rgba(13,26,99,0.12)";e.currentTarget.style.borderColor=fac.color;}}
-                  onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=C.gray;}}
-                >
-                  <div style={{ width:64, height:64, borderRadius:"50%", background:`linear-gradient(135deg,${fac.color}18,${fac.color}35)`, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 12px", border:`2px solid ${fac.color}20` }}>
-                    <Ico name="user" size={30} color={fac.color}/>
-                  </div>
-                  <div style={{ fontWeight:700, fontSize:14, color:C.dark, marginBottom:4 }}>{p.name}</div>
-                  <div style={{ fontSize:12, color:C.mid, marginBottom:4, lineHeight:1.4 }}>{p.title||p.subjects?.[0]}</div>
-                  <Badge label={p.rank||"O'qituvchi"} color={fac.color}/>
-                  {p.exp&&<div style={{ marginTop:8, fontSize:11, color:C.light, display:"flex", alignItems:"center", gap:4, justifyContent:"center" }}>
-                    <Ico name="clock" size={10} color={C.light}/>{p.exp} yil tajriba
-                  </div>}
-                  <div style={{ marginTop:10, display:"flex", alignItems:"center", gap:5, color:fac.color, fontSize:12, fontWeight:600, justifyContent:"center" }}>
-                    <Ico name="user" size={12} color={fac.color}/> Profil
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         )}
         {tab==="dasturlar"&&(
           <div>

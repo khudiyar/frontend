@@ -10,12 +10,6 @@ import { useCountUp } from "../hooks";
 import { timeline } from "../data/about";
 
 function AboutPage({ navigate, isMobile }) {
-  const leadership=[
-    {name:"Prof. Botir Yusupov",    role:"Rektor",                 exp:"28 yil"},
-    {name:"Prof. Dilnora Karimova", role:"O'quv ishlari prorektori",exp:"22 yil"},
-    {name:"Prof. Jasur Toshmatov",  role:"Ilmiy ishlar prorektori", exp:"20 yil"},
-    {name:"Prof. Sarvar Nazarov",   role:"Xalqaro aloqalar prorektori",exp:"18 yil"},
-  ];
   const values=[
     {icon:"award",   title:"Sifat",       desc:"Ta'lim va tadqiqotda eng yuqori standartlar."},
     {icon:"globe",   title:"Xalqarolik",  desc:"Global akademik hamjamiyat bilan faol hamkorlik."},
@@ -94,29 +88,6 @@ function AboutPage({ navigate, isMobile }) {
                   </div>
                 </div>
               )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* LEADERSHIP */}
-      <section style={{ maxWidth:1200, margin:"0 auto", padding:isMobile?"0 16px 32px":"0 24px 52px" }}>
-        <div style={{ textAlign:"center", marginBottom:30 }}>
-          <div style={{ color:C.orange, fontWeight:700, fontSize:11, letterSpacing:"2px", textTransform:"uppercase", marginBottom:8 }}>Rektorat</div>
-          <h2 style={{ fontSize:"clamp(20px,3vw,30px)", fontWeight:800, color:C.dark, fontFamily:"'Playfair Display',Georgia,serif" }}>Universitet rahbariyati</h2>
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4,1fr)", gap:16 }}>
-          {leadership.map((l,i)=>(
-            <div key={l.name} style={{ background:C.white, borderRadius:16, padding:22, textAlign:"center", border:`1px solid ${C.gray}`, transition:"all 0.25s", animation:`fadeUp 0.4s ${i*80}ms ease both` }}
-              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.boxShadow="0 16px 40px rgba(13,26,99,0.12)";e.currentTarget.style.borderColor=C.bright;}}
-              onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="none";e.currentTarget.style.borderColor=C.gray;}}
-            >
-              <div style={{ width:isMobile?56:68, height:isMobile?56:68, borderRadius:"50%", background:`linear-gradient(135deg,${C.bright}16,${C.orange}20)`, display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 14px", border:`2px solid ${C.bright}18` }}>
-                <Ico name="user" size={isMobile?26:34} color={C.bright}/>
-              </div>
-              <div style={{ fontSize:isMobile?13:15, fontWeight:700, color:C.dark, marginBottom:5, fontFamily:"'Playfair Display',Georgia,serif" }}>{l.name}</div>
-              <div style={{ fontSize:12, color:C.mid, lineHeight:1.4, marginBottom:10 }}>{l.role}</div>
-              <Badge label={l.exp} color={C.bright}/>
             </div>
           ))}
         </div>

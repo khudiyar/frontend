@@ -8,6 +8,7 @@ import Breadcrumb from "../components/ui/Breadcrumb";
 import { useCountUp } from "../hooks";
 
 import { departments, allTeachers } from "../data/departments";
+import { faculties, professors } from "../data/faculties.js";
 
 function DepartmentDetailPage({ navigate, params, isMobile }) {
   const dept = departments.find(d=>d.id===params?.deptId)||departments[0];
