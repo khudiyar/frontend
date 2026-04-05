@@ -455,7 +455,7 @@ export default function ModalsPage() {
         {/* Toast container — pastki o'ng burchak */}
         <div style={{position:"fixed",bottom:20,right:20,zIndex:10000,
           display:"flex",flexDirection:"column-reverse",gap:8}}>
-          {toasts.map(t => <Toast key={t.id} t={t} onRemove={remove}/>)}
+          {[...toasts].reverse().map(t => <Toast key={t.id} t={t} onRemove={remove}/>)}
         </div>
 
         {/* Native alert/confirm/prompt modallari */}

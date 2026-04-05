@@ -42,6 +42,8 @@ import EditorPage from "./pages/EditorPage.jsx";
 import AuditoriumPage from "./pages/AuditoriumPage.jsx";
 import CurriculumPage from "./pages/CurriculumPage.jsx";
 import EmployeePage from "./pages/EmployeePage.jsx";
+import MailboxPage from "./pages/MailboxPage.jsx";
+import TipTapEditorPage from "./pages/TipTapEditor.jsx";
 
 /* ─── Inner layout — uses router hooks ─────────────────────────── */
 function AppLayout() {
@@ -124,12 +126,14 @@ function AppLayout() {
           <Route path="/admin"          element={<AdminPanel           navigate={navigate} isMobile={isMobile} />} />
           <Route path="/modals"          element={<ModalsPage           navigate={navigate} isMobile={isMobile} />} />
           <Route path="/editor"          element={<EditorPage           navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/tiptap"          element={<TipTapEditorPage           navigate={navigate} isMobile={isMobile} />} />
           <Route path="/charts"          element={<ChartsPage           navigate={navigate} isMobile={isMobile} />} />
           <Route path="/tables"          element={<TablePage          navigate={navigate} isMobile={isMobile} />} />
 
           <Route path="/auditorium"          element={<AuditoriumPage          navigate={navigate} isMobile={isMobile} />} />
           <Route path="/curriculum"          element={<CurriculumPage          navigate={navigate} isMobile={isMobile} />} />
           <Route path="/employee"          element={<EmployeePage          navigate={navigate} isMobile={isMobile} />} />
+          <Route path="/mail"          element={<MailboxPage          navigate={navigate} isMobile={isMobile} />} />
 
           {/* ── Fallback ── */}
           <Route path="*" element={<Navigate replace to="/" />} />
@@ -208,6 +212,7 @@ function buildPath(page, params = {}) {
     case "charts":    return "/charts";
     case "editor":    return "/editor";
     case "modals":    return "/modals";
+    case "mail":    return "/mail";
     default:               return "/";
   }
 }
@@ -236,6 +241,7 @@ function locationToPage(pathname) {
   if (pathname === "/charts")            return "charts";
   if (pathname === "/editor")            return "editor";
   if (pathname === "/modals")            return "modals";
+  if (pathname === "/mail")            return "mail";
   return "home";
 }
 

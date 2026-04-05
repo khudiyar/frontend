@@ -204,9 +204,9 @@ export default function EditorPage() {
         </div>
 
         {/* Document card */}
-        <div style={{background:C.white,borderRadius:16,border:`1px solid ${C.gray}`,overflow:"hidden",boxShadow:"0 4px 20px rgba(13,26,99,0.06)"}}>
+        <div style={{background:C.white,borderRadius:16,border:`1px solid ${C.gray}`,boxShadow:"0 4px 20px rgba(13,26,99,0.06)"}}>
           {/* Document header */}
-          <div style={{padding:"12px 16px",background:`linear-gradient(135deg,${C.navy},${C.blue})`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
+          <div style={{padding:"12px 16px",position:"sticky", top:0, zIndex:11, borderRadius:"16px 16px 0 0",background:`linear-gradient(135deg,${C.navy},${C.blue})`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:10}}>
             <input defaultValue="O'quv kursi tavsifi — MT-203 guruh" style={{flex:1,background:"transparent",border:"none",color:C.white,fontSize:14,fontWeight:600,outline:"none"}} placeholder="Hujjat nomi..."/>
             <div style={{display:"flex",gap:6}}>
               <button onClick={()=>setShowSource(p=>!p)}
@@ -223,7 +223,7 @@ export default function EditorPage() {
           </div>
 
           {/* Toolbar */}
-          <div style={{borderBottom:`1px solid ${C.gray}`,background:C.white,padding:"6px 8px",display:"flex",alignItems:"center",flexWrap:"wrap",gap:2,position:"sticky",top:0,zIndex:10}}>
+          <div style={{borderBottom:`1px solid ${C.gray}`,background:C.white,padding:"6px 8px",display:"flex",alignItems:"center",flexWrap:"wrap",gap:2,position:"sticky",top:105,zIndex:10}}>
             {/* History */}
             <ToolGroup>
               <ToolBtn cmd="undo" title="Orqaga" icon="M3 10h10a8 8 0 0 1 8 8v2M3 10l6 6M3 10l6-6"/>
