@@ -45,6 +45,8 @@ import EmployeePage from "./pages/EmployeePage.jsx";
 import MailboxPage from "./pages/MailboxPage.jsx";
 import TipTapEditorPage from "./pages/TipTapEditor.jsx";
 
+import TimetablePage from "./pages/TimetablePage.jsx";
+
 /* ─── Inner layout — uses router hooks ─────────────────────────── */
 function AppLayout() {
   const navigateFn = useNavigate();
@@ -135,6 +137,8 @@ function AppLayout() {
           <Route path="/employee"          element={<EmployeePage          navigate={navigate} isMobile={isMobile} />} />
           <Route path="/mail"          element={<MailboxPage          navigate={navigate} isMobile={isMobile} />} />
 
+          <Route path="/timetable"          element={<TimetablePage          navigate={navigate} isMobile={isMobile} />} />
+
           {/* ── Fallback ── */}
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
@@ -213,6 +217,7 @@ function buildPath(page, params = {}) {
     case "editor":    return "/editor";
     case "modals":    return "/modals";
     case "mail":    return "/mail";
+    case "timetable":    return "/timetable";
     default:               return "/";
   }
 }
